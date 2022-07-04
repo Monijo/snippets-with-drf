@@ -1,13 +1,16 @@
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 
-from config.snippets.models import Snippet
-from config.snippets.serializers import SnippetSerializer
+from .models import Snippet
+from .serializers import SnippetSerializer
 
 
-@csrf_exempt
-def snippet_list(request):
+# @csrf_exempt
+@api_view(['GET', 'POST'])
+def snippet_list(request, format=None):
     """
     List all code snippets, or create a new snippet.
     """
@@ -21,19 +24,20 @@ def snippet_list(request):
         serializer = SnippetSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@csrf_exempt
-def snippet_detail(request, pk):
+# @csrf_exempt
+@api_view(['GET', 'PUT', 'DELETE'])
+def snippet_detail(request, pk, format=None):
     """
     Retrieve, update or delete a code snippet.
     """
     try:
         snippet = Snippet.objects.get(pk=pk)
     except Snippet.DoesNotExist:
-        return HttpResponse(status=404)
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
         serializer = SnippetSerializer(snippet)
@@ -45,8 +49,8 @@ def snippet_detail(request, pk):
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
         snippet.delete()
-        return HttpResponse(status=204)
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
