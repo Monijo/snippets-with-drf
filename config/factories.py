@@ -3,7 +3,7 @@ from faker import Faker
 
 from django.contrib.auth.models import User
 
-from ..snippets.models import Product, Category
+from snippets.models import Category, Product
 
 fake = Faker()
 

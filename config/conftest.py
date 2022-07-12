@@ -1,8 +1,7 @@
 import pytest
 from django.test import Client
 from pytest_factoryboy import register
-from factories import UserFactory
-
+from factories import UserFactory, ProductFactory, CategoryFactory
 
 from django.contrib.auth.models import User
 
@@ -71,8 +70,16 @@ def yield_fixture():
 #     return new_user_factory("Test_user","password", "MyName", is_staff="True")
 
 register(UserFactory) #user_factory
+register(ProductFactory)
+register(CategoryFactory)
 
 @pytest.fixture
 def new_user_from_factory_boy(db, user_factory):
     user = user_factory.create()
     return user
+
+
+@pytest.fixture
+def new_product_from_factory_boy(db, product_factory):
+    product = product_factory.create()
+    return product

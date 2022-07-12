@@ -60,7 +60,22 @@ from django.contrib.auth.models import User
 #     print(user.username)
 #     assert User.objects.all().count() == 1
 
+
+#
+# @pytest.mark.django_db
+# def test_new_user_with_factory_boy(new_user_from_factory_boy):
+#     print(new_user_from_factory_boy)
+#     assert User.objects.all().count() == 1
+#
+from snippets.models import Product
+
+
 @pytest.mark.django_db
-def test_new_user_with_factory_boy(new_user_from_factory_boy):
-    print(new_user_from_factory_boy)
-    assert User.objects.all().count() == 1
+def test_product(product_factory):
+    product = product_factory.create()
+    print(product.description)
+    assert True
+
+
+def test_product_with_fixture(new_product_from_factory_boy):
+    assert Product.objects.all().count() == 1
